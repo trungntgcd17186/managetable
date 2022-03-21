@@ -581,26 +581,31 @@ export default function TableContent() {
     if (valueOption === "delete") {
       await deleteData(key);
       setReRender(!reRender);
+      alert("successful delete");
     }
 
     if (valueOption === "new") {
       await editData(key, valueOption);
       setReRender(!reRender);
+      alert("successful change status");
     }
 
     if (valueOption === "approved") {
       await editData(key, valueOption);
       setReRender(!reRender);
+      alert("successful change status");
     }
 
     if (valueOption === "rejected") {
       await editData(key, valueOption);
       setReRender(!reRender);
+      alert("successful change status");
     }
 
     if (valueOption === "closed") {
       await editData(key, valueOption);
       setReRender(!reRender);
+      alert("successful change status");
     }
   };
 

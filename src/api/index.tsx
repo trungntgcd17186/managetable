@@ -1,4 +1,5 @@
 import axios from "axios";
+import React from "react";
 
 let Url = "https://tablemanage.herokuapp.com/table?";
 
@@ -31,6 +32,11 @@ const fetchData = async (obj: any) => {
       statusUrl
   );
 
+  return response;
+};
+
+export const deleteData = async (key: React.Key[]) => {
+  const response = await axios.delete(Url + `key=${key}`);
   return response;
 };
 

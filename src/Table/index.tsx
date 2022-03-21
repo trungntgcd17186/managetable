@@ -3,30 +3,13 @@ import { Button, Col, DatePicker, Input, Row, Select, Table } from "antd";
 import "antd/dist/antd.css";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import fetchData from "../api/index";
+import fetchData, { deleteData } from "../api/index";
 import "./index.css";
-
-const rowSelection = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
-};
 
 export default function TableContent() {
   const [datas, setDatas] = useState<any[]>([]);
 
   const [obj, setObj] = useState<any>({});
-
-  const [shortTemp, setShortTemp] = useState<boolean>();
-  const [contagion, setContagion] = useState<boolean>();
-  const [emergency, setEmergency] = useState<boolean>();
-  const [mileageSurcharge, setMileageSurcharge] = useState<boolean>();
-  const [primaryQuote, setPrimaryQuote] = useState<boolean>();
-  const [status, setStatus] = useState<string>();
 
   const selectionType = "checkbox";
 
@@ -470,34 +453,29 @@ export default function TableContent() {
   //Xử lý thay đổi select cột short term
   const handleChangeShortTerm = async (e: string) => {
     if (e === "yes") {
-      setShortTemp(false);
       setObj({
         ...obj,
-        short_temp: shortTemp,
+        short_temp: true,
       });
-    } else if (e === "no") {
-      setShortTemp(true);
+    } else {
       setObj({
         ...obj,
-        short_temp: shortTemp,
+        short_temp: false,
       });
     }
   };
 
   //Xử lý thay đổi select cột Contagion
   const handleChangeContagion = async (e: string) => {
-    if (e == "yes") {
-      setContagion(false);
+    if (e === "yes") {
       setObj({
         ...obj,
-        contagion: contagion,
+        contagion: true,
       });
-    }
-    if (e == "no") {
-      setContagion(true);
+    } else {
       setObj({
         ...obj,
-        contagion: contagion,
+        contagion: false,
       });
     }
   };
@@ -505,17 +483,14 @@ export default function TableContent() {
   //Xử lý thay đổi select cột Emergency
   const handleChangeEmergency = async (e: string) => {
     if (e === "yes") {
-      setEmergency(false);
       setObj({
         ...obj,
-        emergency: emergency,
+        emergency: true,
       });
-    }
-    if (e === "no") {
-      setEmergency(true);
+    } else {
       setObj({
         ...obj,
-        emergency: emergency,
+        emergency: false,
       });
     }
   };
@@ -523,17 +498,14 @@ export default function TableContent() {
   //Xử lý thay đổi select cột Mileage Surcharge
   const handleChangeMileageSurcharge = async (e: string) => {
     if (e === "yes") {
-      setMileageSurcharge(false);
       setObj({
         ...obj,
-        mileage_surcharge: mileageSurcharge,
+        mileage_surcharge: true,
       });
-    }
-    if (e === "no") {
-      setMileageSurcharge(true);
+    } else {
       setObj({
         ...obj,
-        mileage_surcharge: mileageSurcharge,
+        mileage_surcharge: false,
       });
     }
   };
@@ -541,45 +513,39 @@ export default function TableContent() {
   //Xử lý thay đổi select cột Primary Quote
   const handleChangePrimaryQuote = async (e: string) => {
     if (e === "yes") {
-      setPrimaryQuote(false);
       setObj({
         ...obj,
-        primary_quote: primaryQuote,
+        primary_quote: true,
       });
-    }
-    if (e === "no") {
-      setPrimaryQuote(true);
+    } else {
       setObj({
         ...obj,
-        primary_quote: primaryQuote,
+        primary_quote: false,
       });
     }
   };
 
+  //Xử lý thay đổi select cột Status
   const handleChangeStatus = async (e: string) => {
     if (e === "new") {
-      setStatus(e);
       setObj({
         ...obj,
         status: e,
       });
     }
     if (e === "approved") {
-      setStatus(e);
       setObj({
         ...obj,
         status: e,
       });
     }
     if (e === "rejected") {
-      setStatus(e);
       setObj({
         ...obj,
         status: e,
       });
     }
     if (e === "closed") {
-      setStatus(e);
       setObj({
         ...obj,
         status: e,
@@ -587,10 +553,35 @@ export default function TableContent() {
     }
   };
 
+  const [valueOption, setValueOption] = useState<string>();
+  const [key, setKey] = useState<React.Key[]>([]);
+
   const { Option } = Select;
   function handleChange(value: string) {
     console.log(`selected ${value}`);
+    setValueOption(value);
   }
+
+  const rowSelection = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        "selectedRows: ",
+        selectedRows
+      );
+      setKey(selectedRowKeys);
+    },
+  };
+
+  const handleCheckboxDeleteData = async () => {
+    console.log(valueOption);
+    if (valueOption === "delete") {
+      const response = await deleteData(key);
+    }
+
+    // setDatas(datas);
+  };
+
   return (
     <div>
       <Row>
@@ -602,12 +593,12 @@ export default function TableContent() {
             onChange={handleChange}
           >
             <Option value="delete">Delete</Option>
-            <Option value="markAsConverted">new</Option>
-            <Option value="markAsSubmitted">approved</Option>
-            <Option value="markAsDraft">rejected</Option>
-            <Option value="markAsInvalid">closed</Option>
+            <Option value="new">new</Option>
+            <Option value="approved">approved</Option>
+            <Option value="rejected">rejected</Option>
+            <Option value="closed">closed</Option>
           </Select>
-          <Button>Apply</Button>
+          <Button onClick={handleCheckboxDeleteData}>Apply</Button>
         </Col>
       </Row>
       <Table
@@ -618,7 +609,6 @@ export default function TableContent() {
         dataSource={datas}
         columns={columns}
       />
-      ;
     </div>
   );
 }

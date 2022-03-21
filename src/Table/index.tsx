@@ -2,8 +2,8 @@ import { DeleteFilled, SearchOutlined } from "@ant-design/icons";
 import { Button, Col, DatePicker, Input, Row, Select, Table } from "antd";
 import "antd/dist/antd.css";
 import axios from "axios";
-import { useEffect, useState, useRef } from "react";
-import fetchData, { fetchDataStatus } from "../api/index";
+import { useEffect, useRef, useState } from "react";
+import fetchData from "../api/index";
 import "./index.css";
 
 const rowSelection = {
@@ -26,6 +26,7 @@ export default function TableContent() {
   const [emergency, setEmergency] = useState<boolean>();
   const [mileageSurcharge, setMileageSurcharge] = useState<boolean>();
   const [primaryQuote, setPrimaryQuote] = useState<boolean>();
+  const [status, setStatus] = useState<string>();
 
   const selectionType = "checkbox";
 
@@ -557,20 +558,32 @@ export default function TableContent() {
 
   const handleChangeStatus = async (e: string) => {
     if (e === "new") {
-      const response = await fetchDataStatus(e);
-      setDatas(response.data);
+      setStatus(e);
+      setObj({
+        ...obj,
+        status: e,
+      });
     }
     if (e === "approved") {
-      const response = await fetchDataStatus(e);
-      setDatas(response.data);
+      setStatus(e);
+      setObj({
+        ...obj,
+        status: e,
+      });
     }
     if (e === "rejected") {
-      const response = await fetchDataStatus(e);
-      setDatas(response.data);
+      setStatus(e);
+      setObj({
+        ...obj,
+        status: e,
+      });
     }
     if (e === "closed") {
-      const response = await fetchDataStatus(e);
-      setDatas(response.data);
+      setStatus(e);
+      setObj({
+        ...obj,
+        status: e,
+      });
     }
   };
 

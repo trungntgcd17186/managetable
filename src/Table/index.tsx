@@ -3,7 +3,7 @@ import { Button, Col, DatePicker, Input, Row, Select, Table } from "antd";
 import "antd/dist/antd.css";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import fetchData from "../api/index";
+import fetchData, { fetchDataStatus } from "../api/index";
 import "./index.css";
 
 const rowSelection = {
@@ -555,30 +555,22 @@ export default function TableContent() {
     }
   };
 
-  const handleChangeStatus = (e: string) => {
+  const handleChangeStatus = async (e: string) => {
     if (e === "new") {
-      const newData: IDataType[] = datas.filter(
-        (data) => data.status === "new"
-      );
-      setDatas(newData);
+      const response = await fetchDataStatus(e);
+      setDatas(response.data);
     }
     if (e === "approved") {
-      const newData: IDataType[] = datas.filter(
-        (data) => data.status === "approved"
-      );
-      setDatas(newData);
+      const response = await fetchDataStatus(e);
+      setDatas(response.data);
     }
     if (e === "rejected") {
-      const newData: IDataType[] = datas.filter(
-        (data) => data.status === "rejected"
-      );
-      setDatas(newData);
+      const response = await fetchDataStatus(e);
+      setDatas(response.data);
     }
     if (e === "closed") {
-      const newData: IDataType[] = datas.filter(
-        (data) => data.status === "closed"
-      );
-      setDatas(newData);
+      const response = await fetchDataStatus(e);
+      setDatas(response.data);
     }
   };
 

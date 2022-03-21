@@ -28,4 +28,8 @@ const fetchData = async (obj: any) => {
   return response;
 };
 
+export const fetchDataStatus = async (e: string) => {
+  const response = await axios.get(Url + `status=${e}`);
+  return response;
+};
 export default fetchData;

@@ -1,3 +1,7 @@
+.ant-table-content {
+  overflow-y: scroll;
+}
+
 .ant-pagination {
   display: flex;
   justify-content: center;

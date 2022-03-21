@@ -3,13 +3,14 @@ import { Button, Col, DatePicker, Input, Row, Select, Table } from "antd";
 import "antd/dist/antd.css";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import fetchData, { deleteData } from "../api/index";
+import fetchData, { deleteData, editData } from "../api/index";
 import "./index.css";
 
 export default function TableContent() {
   const [datas, setDatas] = useState<any[]>([]);
 
   const [obj, setObj] = useState<any>({});
+  const [reRender, setReRender] = useState<boolean>(false);
 
   const selectionType = "checkbox";
 
@@ -17,7 +18,7 @@ export default function TableContent() {
     axios.get("https://tablemanage.herokuapp.com/table").then((response) => {
       setDatas(response.data);
     });
-  }, []);
+  }, [reRender]);
 
   const SelectRef = useRef<HTMLDivElement>(null);
 
@@ -533,18 +534,21 @@ export default function TableContent() {
         status: e,
       });
     }
+
     if (e === "approved") {
       setObj({
         ...obj,
         status: e,
       });
     }
+
     if (e === "rejected") {
       setObj({
         ...obj,
         status: e,
       });
     }
+
     if (e === "closed") {
       setObj({
         ...obj,
@@ -573,13 +577,31 @@ export default function TableContent() {
     },
   };
 
-  const handleCheckboxDeleteData = async () => {
-    console.log(valueOption);
+  const handleCheckboxChangeData = async () => {
     if (valueOption === "delete") {
-      const response = await deleteData(key);
+      await deleteData(key);
+      setReRender(!reRender);
     }
 
-    // setDatas(datas);
+    if (valueOption === "new") {
+      await editData(key, valueOption);
+      setReRender(!reRender);
+    }
+
+    if (valueOption === "approved") {
+      await editData(key, valueOption);
+      setReRender(!reRender);
+    }
+
+    if (valueOption === "rejected") {
+      await editData(key, valueOption);
+      setReRender(!reRender);
+    }
+
+    if (valueOption === "closed") {
+      await editData(key, valueOption);
+      setReRender(!reRender);
+    }
   };
 
   return (
@@ -598,7 +620,7 @@ export default function TableContent() {
             <Option value="rejected">rejected</Option>
             <Option value="closed">closed</Option>
           </Select>
-          <Button onClick={handleCheckboxDeleteData}>Apply</Button>
+          <Button onClick={handleCheckboxChangeData}>Apply</Button>
         </Col>
       </Row>
       <Table

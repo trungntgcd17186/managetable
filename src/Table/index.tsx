@@ -1,7 +1,15 @@
 import { DeleteFilled, SearchOutlined } from "@ant-design/icons";
-import { Button, Col, DatePicker, Input, Row, Select, Table } from "antd";
+import {
+  Button,
+  Col,
+  DatePicker,
+  Input,
+  Row,
+  Select,
+  Table,
+  Pagination,
+} from "antd";
 import "antd/dist/antd.css";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import fetchData, { deleteData, editData } from "../api/index";
 import "./index.css";
@@ -9,16 +17,19 @@ import "./index.css";
 export default function TableContent() {
   const [datas, setDatas] = useState<any[]>([]);
 
-  const [obj, setObj] = useState<any>({});
+  const [obj, setObj] = useState<any>({ _page: 1 });
   const [reRender, setReRender] = useState<boolean>(false);
 
-  const selectionType = "checkbox";
-
+  //Call lại Api sau khi obj thay đổi.
   useEffect(() => {
-    axios.get("https://tablemanage.herokuapp.com/table").then((response) => {
+    async function fetchMyAPI() {
+      const response = await fetchData(obj);
       setDatas(response.data);
-    });
-  }, [reRender]);
+    }
+    fetchMyAPI();
+  }, [obj, reRender]);
+
+  const selectionType = "checkbox";
 
   const SelectRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +37,10 @@ export default function TableContent() {
     {
       title: () => {
         return (
-          <div style={{ textAlign: "center", height: "54px" }}>Quote ID</div>
+          <div style={{ textAlign: "center", height: "54px" }}>
+            Quote ID
+            <Input onChange={(e) => handleSearch(e)} />
+          </div>
         );
       },
       dataIndex: "key",
@@ -38,34 +52,6 @@ export default function TableContent() {
           },
           children: <span>{text}</span>,
         };
-      },
-      //Xử lý search theo ID
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }: any) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Search ID"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onPressEnter={() => {
-                confirm();
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            />
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value: any, record: any) => {
-        return record.key.toLowerCase().includes(value.toLowerCase());
       },
     },
     {
@@ -79,6 +65,7 @@ export default function TableContent() {
             }}
           >
             Care Recipient Name
+            <Input onChange={(e) => handleSearch(e)} />
           </div>
         );
       },
@@ -106,9 +93,7 @@ export default function TableContent() {
           </>
         );
       },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
+
       onFilter: (value: any, record: any) => {
         return record.care_recipient_name
           .toLowerCase()
@@ -125,7 +110,7 @@ export default function TableContent() {
             }}
           >
             Care Recipient DOB
-            <DatePicker onChange={handleChangeDatePicker} />
+            <DatePicker onChange={handleChangeCareRecipientDOB} />
           </div>
         );
       },
@@ -341,7 +326,7 @@ export default function TableContent() {
             }}
           >
             Start Date
-            <DatePicker />
+            <DatePicker onChange={handleChangeStartDate} />
           </div>
         );
       },
@@ -441,15 +426,6 @@ export default function TableContent() {
       render: () => <DeleteFilled style={{ color: "orange" }} />,
     },
   ];
-
-  //Call lại Api sau khi obj thay đổi.
-  useEffect(() => {
-    async function fetchMyAPI() {
-      const response = await fetchData(obj);
-      setDatas(response.data);
-    }
-    fetchMyAPI();
-  }, [obj]);
 
   //Xử lý thay đổi select cột short term
   const handleChangeShortTerm = async (e: string) => {
@@ -567,7 +543,7 @@ export default function TableContent() {
   }
 
   const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: React.Key[]) => {
       console.log(
         `selectedRowKeys: ${selectedRowKeys}`,
         "selectedRows: ",
@@ -609,8 +585,38 @@ export default function TableContent() {
     }
   };
 
-  const handleChangeDatePicker = (date: any, dateString: any) => {
-    console.log(dateString);
+  const handleChangeCareRecipientDOB = async (
+    date: moment.Moment | null,
+    dateString: string
+  ) => {
+    setObj({
+      ...obj,
+      care_recipient_dob: dateString,
+    });
+  };
+
+  const handleChangeStartDate = async (
+    date: moment.Moment | null,
+    dateString: string
+  ) => {
+    setObj({
+      ...obj,
+      start_date: dateString,
+    });
+  };
+
+  const handleChangePage = async (page: number) => {
+    setObj({
+      ...obj,
+      _page: page,
+    });
+  };
+
+  const handleSearch = async (e: any) => {
+    setObj({
+      ...obj,
+      q: e.target.value,
+    });
   };
 
   return (
@@ -639,7 +645,9 @@ export default function TableContent() {
         }}
         dataSource={datas}
         columns={columns}
+        pagination={false}
       />
+      <Pagination onChange={handleChangePage} total={100} />
     </div>
   );
 }

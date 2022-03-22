@@ -125,7 +125,7 @@ export default function TableContent() {
             }}
           >
             Care Recipient DOB
-            <DatePicker />
+            <DatePicker onChange={handleChangeDatePicker} />
           </div>
         );
       },
@@ -607,6 +607,10 @@ export default function TableContent() {
       setReRender(!reRender);
       alert("successful change status");
     }
+  };
+
+  const handleChangeDatePicker = (date: any, dateString: any) => {
+    console.log(dateString);
   };
 
   return (

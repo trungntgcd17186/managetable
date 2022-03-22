@@ -1,13 +1,13 @@
-import { DeleteFilled, SearchOutlined } from "@ant-design/icons";
+import { DeleteFilled } from "@ant-design/icons";
 import {
   Button,
   Col,
   DatePicker,
   Input,
+  Pagination,
   Row,
   Select,
   Table,
-  Pagination,
 } from "antd";
 import "antd/dist/antd.css";
 import { useEffect, useRef, useState } from "react";
@@ -16,7 +16,6 @@ import "./index.css";
 
 export default function TableContent() {
   const [datas, setDatas] = useState<any[]>([]);
-
   const [obj, setObj] = useState<any>({ _page: 1 });
   const [reRender, setReRender] = useState<boolean>(false);
 
@@ -71,33 +70,9 @@ export default function TableContent() {
       },
       dataIndex: "care_recipient_name",
       key: "care_recipient_name",
-      //Xử lý search theo Name
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }: any) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Search Name"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onPressEnter={() => {
-                confirm();
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            />
-          </>
-        );
-      },
 
       onFilter: (value: any, record: any) => {
-        return record.care_recipient_name
-          .toLowerCase()
-          .includes(value.toLowerCase());
+        return record.care_recipient_name;
       },
     },
     {
@@ -534,52 +509,51 @@ export default function TableContent() {
   };
 
   const [valueOption, setValueOption] = useState<string>();
-  const [key, setKey] = useState<React.Key[]>([]);
+
+  const [arrIds, setArrIds] = useState<React.Key[]>([]);
 
   const { Option } = Select;
   function handleChange(value: string) {
-    console.log(`selected ${value}`);
     setValueOption(value);
   }
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: React.Key[]) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-      setKey(selectedRowKeys);
+      //Map field id từ selectedRows sau đó push id vào mảng array, set mảng vào state để cung cấp array id cho action.
+      const array: any[] = [];
+      selectedRows.map((el: any) => array.push(el.id));
+      setArrIds(array);
     },
   };
 
+  //Xử lý action change data theo checkbox và checkbox all
   const handleCheckboxChangeData = async () => {
     if (valueOption === "delete") {
-      await deleteData(key);
+      await deleteData(arrIds);
       setReRender(!reRender);
       alert("successful delete");
     }
 
     if (valueOption === "new") {
-      await editData(key, valueOption);
+      await editData(arrIds, valueOption);
       setReRender(!reRender);
       alert("successful change status");
     }
 
     if (valueOption === "approved") {
-      await editData(key, valueOption);
+      await editData(arrIds, valueOption);
       setReRender(!reRender);
       alert("successful change status");
     }
 
     if (valueOption === "rejected") {
-      await editData(key, valueOption);
+      await editData(arrIds, valueOption);
       setReRender(!reRender);
       alert("successful change status");
     }
 
     if (valueOption === "closed") {
-      await editData(key, valueOption);
+      await editData(arrIds, valueOption);
       setReRender(!reRender);
       alert("successful change status");
     }
@@ -605,6 +579,7 @@ export default function TableContent() {
     });
   };
 
+  //Xử lý search theo cột QuoteID
   const handleChangePage = async (page: number) => {
     setObj({
       ...obj,
@@ -612,6 +587,7 @@ export default function TableContent() {
     });
   };
 
+  //Xử lý search theo cột Care Recipient Name
   const handleSearch = async (e: any) => {
     setObj({
       ...obj,

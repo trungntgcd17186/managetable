@@ -29,23 +29,29 @@ const fetchData = async (obj: any) => {
   // const startDateUrl = obj.start_date === undefined ? "" : startDate;
 
   const response = await axios.get(Url, { params: obj });
-
   return response;
 };
 
-export const deleteData = async (key: React.Key[]) => {
-  const response = await axios.get(Url + `key=${key}`);
-  const id = response.data[0].id;
-  await axios.delete(`https://tablemanage.herokuapp.com/table/${id}`);
+export const deleteData = async (arrIds: React.Key[]) => {
+  await Promise.all(
+    arrIds.map(async (id) => {
+      await axios.delete(`https://tablemanage.herokuapp.com/table/${id}`);
+    })
+  );
 };
 
-export const editData = async (key: React.Key[], valueOption: string) => {
-  const response = await axios.get(Url + `key=${key}`);
-  const id = response.data[0].id;
-  await axios.put(`https://tablemanage.herokuapp.com/table/${id}`, {
-    ...response.data[0],
-    status: valueOption,
-  });
+export const editData = async (arrIds: React.Key[], valueOption: string) => {
+  await Promise.all(
+    arrIds.map(async (id) => {
+      const response = await axios.get(
+        `https://tablemanage.herokuapp.com/table/${id}`
+      );
+      await axios.put(`https://tablemanage.herokuapp.com/table/${id}`, {
+        ...response.data,
+        status: valueOption,
+      });
+    })
+  );
 };
 
 export default fetchData;

@@ -10,6 +10,7 @@ import {
   Table,
 } from "antd";
 import "antd/dist/antd.css";
+import { devNull } from "os";
 import { useEffect, useRef, useState } from "react";
 import fetchData, { deleteData, editData } from "../api/index";
 import "./index.css";
@@ -19,6 +20,9 @@ export default function TableContent() {
   const [obj, setObj] = useState<object>({ _page: 1 });
   const [reRender, setReRender] = useState<boolean>(false);
 
+  const [valueOption, setValueOption] = useState<string>("");
+
+  const [arrIds, setArrIds] = useState<React.Key[]>([]);
   //Call lại Api sau khi obj thay đổi.
   useEffect(() => {
     async function fetchMyAPI() {
@@ -509,10 +513,6 @@ export default function TableContent() {
     }
   };
 
-  const [valueOption, setValueOption] = useState<string>();
-
-  const [arrIds, setArrIds] = useState<React.Key[]>([]);
-
   const { Option } = Select;
   function handleChange(value: string) {
     setValueOption(value);
@@ -533,27 +533,7 @@ export default function TableContent() {
       await deleteData(arrIds);
       setReRender(!reRender);
       alert("successful delete");
-    }
-
-    if (valueOption === "new") {
-      await editData(arrIds, valueOption);
-      setReRender(!reRender);
-      alert("successful change status");
-    }
-
-    if (valueOption === "approved") {
-      await editData(arrIds, valueOption);
-      setReRender(!reRender);
-      alert("successful change status");
-    }
-
-    if (valueOption === "rejected") {
-      await editData(arrIds, valueOption);
-      setReRender(!reRender);
-      alert("successful change status");
-    }
-
-    if (valueOption === "closed") {
+    } else {
       await editData(arrIds, valueOption);
       setReRender(!reRender);
       alert("successful change status");

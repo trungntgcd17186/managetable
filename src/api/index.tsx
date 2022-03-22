@@ -3,7 +3,7 @@ import React from "react";
 
 let Url = "https://tablemanage.herokuapp.com/table?";
 
-const fetchData = async (obj: any) => {
+const fetchData = async (obj: object) => {
   // const short = `&short_temp=${obj.short_temp}`;
   // const contagion = `&contagion=${obj.contagion}`;
   // const emergency = `&emergency=${obj.emergency}`;

@@ -1,8 +1,8 @@
 interface IDataType {
   key: React.Key;
-  quote_id: string;
-  name: string;
-  birthday: dateTime;
+  id: number;
+  care_recipient_name: string;
+  care_recipient_dob: dateTime;
   rate: number;
   short_temp: boolean;
   contagion: boolean;

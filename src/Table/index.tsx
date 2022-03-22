@@ -16,7 +16,7 @@ import "./index.css";
 
 export default function TableContent() {
   const [datas, setDatas] = useState<any[]>([]);
-  const [obj, setObj] = useState<any>({ _page: 1 });
+  const [obj, setObj] = useState<object>({ _page: 1 });
   const [reRender, setReRender] = useState<boolean>(false);
 
   //Call lại Api sau khi obj thay đổi.
@@ -71,6 +71,7 @@ export default function TableContent() {
       dataIndex: "care_recipient_name",
       key: "care_recipient_name",
 
+      //Cái này không dùng tới, xóa thì lỗi rowSelection :))
       onFilter: (value: any, record: any) => {
         return record.care_recipient_name;
       },
@@ -91,7 +92,7 @@ export default function TableContent() {
       },
       dataIndex: "care_recipient_dob",
       key: "care_recipient_dob",
-      render(text: any) {
+      render(text: IDataType) {
         return {
           props: {
             style: { textAlign: "right" },
@@ -307,7 +308,7 @@ export default function TableContent() {
       },
       dataIndex: "start_date",
       key: "start_date",
-      render(text: any) {
+      render(text: IDataType) {
         return {
           props: {
             style: { textAlign: "right" },
@@ -387,7 +388,7 @@ export default function TableContent() {
       },
       dataIndex: "status",
       key: "status",
-      render(text: any) {
+      render(text: string) {
         return {
           props: {
             style: { textAlign: "center" },
@@ -520,7 +521,7 @@ export default function TableContent() {
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: React.Key[]) => {
       //Map field id từ selectedRows sau đó push id vào mảng array, set mảng vào state để cung cấp array id cho action.
-      const array: any[] = [];
+      const array: number[] = [];
       selectedRows.map((el: any) => array.push(el.id));
       setArrIds(array);
     },
@@ -588,7 +589,7 @@ export default function TableContent() {
   };
 
   //Xử lý search theo cột Care Recipient Name
-  const handleSearch = async (e: any) => {
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setObj({
       ...obj,
       q: e.target.value,

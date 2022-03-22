@@ -484,33 +484,10 @@ export default function TableContent() {
 
   //Xử lý thay đổi select cột Status
   const handleChangeStatus = async (e: string) => {
-    if (e === "new") {
-      setObj({
-        ...obj,
-        status: e,
-      });
-    }
-
-    if (e === "approved") {
-      setObj({
-        ...obj,
-        status: e,
-      });
-    }
-
-    if (e === "rejected") {
-      setObj({
-        ...obj,
-        status: e,
-      });
-    }
-
-    if (e === "closed") {
-      setObj({
-        ...obj,
-        status: e,
-      });
-    }
+    setObj({
+      ...obj,
+      status: e,
+    });
   };
 
   const { Option } = Select;
